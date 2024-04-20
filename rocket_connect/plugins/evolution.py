@@ -846,7 +846,7 @@ class Connector(ConnectorBase):
     def handle_ack_fromme_message(self):
         # ack receipt
         if (
-            self.config.get("enable_ack_receipt")
+            self.config.get("enable_ack_receipt", True)
             and self.connector.server.type == "rocketchat"
         ):
             # get the message id from whatsapp, find rocket.chat message and update
@@ -1048,6 +1048,7 @@ class ConnectorConfigForm(BaseConnectorConfigForm):
             self.fields["enable_ack_receipt"] = forms.BooleanField(
                 required=False,
                 help_text="This will update the ingoing message to show it was delivered and received",
+                initial=True
             )
 
     webhook = forms.CharField(
