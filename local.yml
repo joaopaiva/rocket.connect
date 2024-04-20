@@ -1,8 +1,8 @@
 version: '3'
 
 volumes:
-  rocketconnect_local_postgres_data: {}
-  rocketconnect_local_postgres_data_backups: {}
+  local_postgres_data: {}
+  local_postgres_data_backups: {}
   evolution_local_store: {}
   evolution_local_instances: {}
   local_wppconnect_data: {}
@@ -40,8 +40,8 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - rocketconnect_local_postgres_data:/var/lib/postgresql/data
-      - rocketconnect_local_postgres_data_backups:/backups
+      - local_postgres_data:/var/lib/postgresql/data:Z
+      - local_postgres_data_backups:/backups:z
     env_file:
       - ./.envs/.local/.postgres
 
