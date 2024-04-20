@@ -5,6 +5,8 @@ volumes:
   rocketconnect_local_postgres_data_backups: {}
   evolution_local_store: {}
   evolution_local_instances: {}
+  local_wppconnect_data: {}
+  local_wppconnect_tokens: {}
 
 services:
   django: &django
@@ -108,3 +110,16 @@ services:
     env_file:
       - ./compose/local/evolution/env
     command: ['node', './dist/src/main.js']
+
+  wppconnect:
+    #image: wppconnect/server-cli:main
+    # for some reason, the server-cli is not working properly
+    # in mac, so build it locally and use it here:
+    image: server-cli-local
+    # for command options: https://github.com/wppconnect-team/server-cli/blob/main/src/program.js
+    command: wppserver --startAllSession
+    volumes:
+      - local_wppconnect_data:/usr/src/server-cli/userDataDir
+      - local_wppconnect_tokens:/usr/src/server-cli/tokens
+    ports:
+      - "21465:21465"

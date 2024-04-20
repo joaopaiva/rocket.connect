@@ -580,6 +580,23 @@ class Connector(ConnectorBase):
                 room = self.get_room(department)
                 if not room:
                     return JsonResponse({"message": "no room generated"})
+
+                #
+                # outcome if a quoted message
+                #
+                quoted = message.get("extendedTextMessage", {}).get("contextInfo", {}).get("quotedMessage")
+                if quoted:
+                    msg = message.get("extendedTextMessage", {}).get("text")
+                    quoted_message = quoted.get("conversation")
+                    # add > to beginning of quoted message
+                    formatted_text = "\n".join([f">{line}" for line in quoted_message.split("\n")])
+                    new_message = f"{formatted_text} \n {msg}"
+                    self.outcome_text(
+                        room_id=room.room_id,
+                        text=new_message,
+                        message_id=self.get_message_id(),
+                    ).json()
+                    return JsonResponse({"message": "Quoted incoming message"})
                 #
                 # outcome if is a reaction
                 #
@@ -610,7 +627,8 @@ class Connector(ConnectorBase):
                     else:
                         msg = "some message (audio, for example)"
                     reaction = ref_message.get("text")
-                    new_message = f"Reacted: {reaction} to: {msg}"
+                    formatted_text = "\n".join([f">{line}" for line in msg.split("\n")])
+                    new_message = f"{formatted_text}\n{reaction}"
                     room = self.get_room()
                     self.outcome_text(
                         room_id=room.room_id,
@@ -769,7 +787,7 @@ class Connector(ConnectorBase):
 
             else:
                 self.logger_info(
-                    f"Message Object {message.id} Already delivered. Ignoring",
+                    f"Message Object {str(message)} Already delivered. Ignoring",
                 )
             return JsonResponse({})
         #
@@ -868,6 +886,9 @@ class Connector(ConnectorBase):
             content = message
         else:
             content = message["msg"]
+        if agent_name:
+            content = self.render_message_agent_template(content, agent_name)
+            # content = "*[" + agent_name + "]*\n" + content
         payload = {
             "number": self.get_ingoing_visitor_phone() or self.get_visitor_phone(),
             "options": {"delay": self.connector.config.get("send_message_delay", 1200)},
