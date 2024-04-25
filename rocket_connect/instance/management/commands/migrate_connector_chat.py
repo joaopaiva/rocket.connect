@@ -29,7 +29,7 @@ class Command(BaseCommand):
         )
         open_messages = Message.objects.filter(
             connector__id=from_connector,
-            open=True
+            delivered=False
         )
         if open_chats.count():
             from_connector_object = open_chats.first().connector

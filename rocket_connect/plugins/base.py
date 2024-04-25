@@ -1107,12 +1107,14 @@ class Connector:
                 self.handle_livechat_session_queued()
             if self.message.get("type") == "Message":
                 message, created = self.register_message()
-                ignore_close_message = (
-                    self.message_object.room.token
-                    in self.config.get("ignore_token_force_close_message", "").split(
-                        ",",
+                # TODO: message may not habe room
+                if self.message_object:
+                    ignore_close_message = (
+                        self.message_object.room.token
+                        in self.config.get("ignore_token_force_close_message", "").split(
+                            ",",
+                        )
                     )
-                )
                 if not message.delivered:
                     # prepare message to be sent to client
                     for message in self.message.get("messages", []):
