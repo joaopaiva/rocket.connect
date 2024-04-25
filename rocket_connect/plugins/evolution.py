@@ -648,6 +648,14 @@ class Connector(ConnectorBase):
                     )
                     deliver = self.outcome_text(room.room_id, text)
                     print(deliver)
+                if message.get("conversation"):
+                    text = (
+                        self.message.get("data", {})
+                        .get("message", {})
+                        .get("conversation")
+                    )
+                    deliver = self.outcome_text(room.room_id, text)
+                    print(deliver)
                 #
                 # outcome if image
                 #
