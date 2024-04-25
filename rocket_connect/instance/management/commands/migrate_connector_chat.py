@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django_celery_beat.models import PeriodicTask
 from instance.models import LiveChatRoom, Connector
+from envelope.models import Message
 
 class Command(BaseCommand):
     help = "Migrate chats from one connector to the other. This is useful for migrating a number between different connectors."
@@ -26,6 +27,10 @@ class Command(BaseCommand):
             connector__id=from_connector,
             open=True
         )
+        open_messages = Message.objects.filter(
+            connector__id=from_connector,
+            open=True
+        )
         if open_chats.count():
             from_connector_object = open_chats.first().connector
             print("Migrating from connector: ", open_chats.first().connector)
@@ -42,8 +47,10 @@ class Command(BaseCommand):
             # apply
             if options.get("apply"):
                 print(f"Applying... migrating {open_chats.count()} open chats from {from_connector_object} to {to_connector_object}")
-                update = open_chats.update(connector_id=to_connector_object.id)
-                print("RESULT: ", update)
+                update_rooms = open_chats.update(connector_id=to_connector_object.id)
+                update_messages = open_messages.update(connector_id=to_connector_object.id)
+                print("RESULT: ", update_rooms)
+                print("RESULT: ", update_messages)
 
         else:
             print("No chats found on connector with id", from_connector)

@@ -102,7 +102,7 @@ services:
     command: /start-flower
 
   evolution:
-    image: davidsongomes/evolution-api
+    image: atendai/evolution-api
     restart: always
     ports:
       - 8084:8080
