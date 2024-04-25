@@ -242,8 +242,7 @@
                   <h2>
                     {% if rooms.grouper %}
                       {{ rooms.grouper }}
-                      <a href="{{ rooms.list.0.connector.server.get_external_url }}//omnichannel/current/{{ rooms.grouper.room_id }}/room-info/">link
-                      </a>
+                      <a href="{{ rooms.list.0.connector.server.get_external_url }}/live/{{ rooms.grouper.room_id }}/room-info/">link</a>
                     {% else %}
                       No Related Room
                     {% endif %}
