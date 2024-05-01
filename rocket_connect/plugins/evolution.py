@@ -588,15 +588,17 @@ class Connector(ConnectorBase):
                 if quoted:
                     msg = message.get("extendedTextMessage", {}).get("text")
                     quoted_message = quoted.get("conversation")
-                    # add > to beginning of quoted message
-                    formatted_text = "\n".join([f">{line}" for line in quoted_message.split("\n")])
-                    new_message = f"{formatted_text} \n {msg}"
-                    self.outcome_text(
-                        room_id=room.room_id,
-                        text=new_message,
-                        message_id=self.get_message_id(),
-                    ).json()
-                    return JsonResponse({"message": "Quoted incoming message"})
+                    # if there is quoted text:
+                    if quoted_message:
+                        # add > to beginning of quoted message
+                        formatted_text = "\n".join([f">{line}" for line in quoted_message.split("\n")])
+                        new_message = f"{formatted_text} \n {msg}"
+                        self.outcome_text(
+                            room_id=room.room_id,
+                            text=new_message,
+                            message_id=self.get_message_id(),
+                        ).json()
+                        return JsonResponse({"message": "Quoted incoming message"})
                 #
                 # outcome if is a reaction
                 #
@@ -647,7 +649,6 @@ class Connector(ConnectorBase):
                         .get("text")
                     )
                     deliver = self.outcome_text(room.room_id, text)
-                    print(deliver)
                 if message.get("conversation"):
                     text = (
                         self.message.get("data", {})
@@ -655,9 +656,8 @@ class Connector(ConnectorBase):
                         .get("conversation")
                     )
                     deliver = self.outcome_text(room.room_id, text)
-                    print(deliver)
                 #
-                # outcome if image
+                # outcome if image or other
                 #
                 if (
                     message.get("imageMessage")
@@ -669,20 +669,29 @@ class Connector(ConnectorBase):
                     or message.get("contactsArrayMessage")
                     or message.get("locationMessage")
                     or message.get("stickerMessage")
+                    or message.get("contactMessage")
                 ):
                     filename = None
                     caption = None
                     mime = None
 
                     # files that are actually text
-                    if message.get("contactsArrayMessage"):
-                        for contact in message.get("contactsArrayMessage").get(
+                    if message.get("contactsArrayMessage") or message.get("contactMessage"):
+                        if message.get("contactsArrayMessage"):
+                            contacts = message.get("contactsArrayMessage").get(
                             "contacts",
-                        ):
+                        )
+                        if message.get("contactMessage"):
+                            contacts = [message.get("contactMessage")]
+                        i = 0
+                        for contact in contacts:
+
                             sent = self.outcome_text(
                                 room_id=room.room_id,
-                                text=f"{contact.get('displayName')}\n{contact.get('vcard')}",
+                                text=f":blue_book: {contact.get('displayName')}\n{contact.get('vcard')}",
+                                message_id=self.get_message_id() + str(i)
                             )
+                            i += 1
                         if sent.ok:
                             self.message_object.delivered = True
                             self.message_object.save()
@@ -792,6 +801,21 @@ class Connector(ConnectorBase):
                         self.logger_info(
                             f"GETTOMG message MEDIA ERROR. url {url}, file sent: {media_body.json()} media_body",
                         )
+
+            #
+            # Outcome if message edited
+            #
+            if message.get("editedMessage"):
+                # get current message content
+                edited_id = message.get("editedMessage", {}).get("message", {}).get("protocolMessage", {}).get("key", {}).get("id", {})
+                self.get_rocket_client()
+                edited_message = self.rocket.chat_get_message(msg_id=edited_id)
+                if edited_message.ok:
+                    edited_content = edited_message.json()["message"]["msg"]
+                new_content = message.get("editedMessage", {}).get("message", {}).get("protocolMessage", {}).get("editedMessage", {}).get("conversation", {})
+                text = f"EDIT: ~{edited_content}~\n{new_content}"
+                self.outcome_text(room.room_id, text)
+                return JsonResponse({"message": "edited message"})
 
             else:
                 self.logger_info(
