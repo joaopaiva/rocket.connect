@@ -1134,7 +1134,7 @@ class Connector:
                             print("SHOULD GET: ", message.get("msg"))
                             print("DEPARTMENT CLOSING: ", department)
                             print("ROOM INFo:", room_info)
-                            if message.get("msg") and not ignore_close_message:
+                            if message.get("msg") and message.get("msg") != "None" and not ignore_close_message:
                                 print("GOT IN!!!!")
                                 if self.connector.config.get(
                                     "add_agent_name_at_close_message",
