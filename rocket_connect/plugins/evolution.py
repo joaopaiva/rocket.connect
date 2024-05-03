@@ -574,7 +574,7 @@ class Connector(ConnectorBase):
         if self.message.get("event") == "messages.upsert":
 
             # ignore buttons message
-            if self.message.get("data").get("messageType") == "buttonsMessage":
+            if self.message.get("data").get("messageType") in ["buttonsMessage", "buttonsResponseMessage"]:
                 return JsonResponse({"message": "Buttons not supported"})
 
             department = None
