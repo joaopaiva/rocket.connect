@@ -574,8 +574,12 @@ class Connector(ConnectorBase):
         if self.message.get("event") == "messages.upsert":
 
             # ignore buttons message
-            if self.message.get("data").get("messageType") in ["buttonsMessage", "buttonsResponseMessage"]:
-                return JsonResponse({"message": "Buttons not supported"})
+            if self.message.get("data").get("messageType") in [
+                "buttonsMessage", "buttonsResponseMessage", "listMessage", "listResponseMessage"
+            ]:
+                return JsonResponse({"message": "Buttons or list not supported"})
+
+
 
             department = None
             message_obj, created = self.register_message()
@@ -585,6 +589,17 @@ class Connector(ConnectorBase):
                 room = self.get_room(department)
                 if not room:
                     return JsonResponse({"message": "no room generated"})
+
+                # alert on viewonce
+                if self.message.get("data").get("messageType") in [
+                    "viewOnceMessage"
+                ]:
+                    self.outcome_text(
+                        room_id=self.room.room_id,
+                        text=f"User sent ViewOnce message. This is not supported!!",
+                        message_id=self.get_message_id(),
+                    ).json()
+                    return JsonResponse({"message": "User sent ViewOnce message. This is not supported!!"})
 
                 #
                 # outcome if a quoted message
@@ -684,8 +699,8 @@ class Connector(ConnectorBase):
                     if message.get("contactsArrayMessage") or message.get("contactMessage"):
                         if message.get("contactsArrayMessage"):
                             contacts = message.get("contactsArrayMessage").get(
-                            "contacts",
-                        )
+                                "contacts",
+                            )
                         if message.get("contactMessage"):
                             contacts = [message.get("contactMessage")]
                         i = 0
@@ -812,12 +827,14 @@ class Connector(ConnectorBase):
             #
             if message.get("editedMessage"):
                 # get current message content
-                edited_id = message.get("editedMessage", {}).get("message", {}).get("protocolMessage", {}).get("key", {}).get("id", {})
+                edited_id = message.get("editedMessage", {}).get("message", {}).get(
+                    "protocolMessage", {}).get("key", {}).get("id", {})
                 self.get_rocket_client()
                 edited_message = self.rocket.chat_get_message(msg_id=edited_id)
                 if edited_message.ok:
                     edited_content = edited_message.json()["message"]["msg"]
-                new_content = message.get("editedMessage", {}).get("message", {}).get("protocolMessage", {}).get("editedMessage", {}).get("conversation", {})
+                new_content = message.get("editedMessage", {}).get("message", {}).get(
+                    "protocolMessage", {}).get("editedMessage", {}).get("conversation", {})
                 text = f"EDIT: ~{edited_content}~\n{new_content}"
                 self.outcome_text(room.room_id, text)
                 return JsonResponse({"message": "edited message"})
