@@ -1,5 +1,3 @@
-version: '3'
-
 volumes:
   local_postgres_data: {}
   local_postgres_data_backups: {}
@@ -102,7 +100,8 @@ services:
     command: /start-flower
 
   evolution:
-    image: atendai/evolution-api
+    #image: atendai/evolution-api:v2.0.10
+    image: atendai/evolution-api:v1.8.2
     restart: always
     ports:
       - 8084:8080
@@ -114,10 +113,10 @@ services:
     command: ['node', './dist/src/main.js']
 
   wppconnect:
-    #image: wppconnect/server-cli:main
+    image: wppconnect/server-cli:main
     # for some reason, the server-cli is not working properly
     # in mac, so build it locally and use it here:
-    image: server-cli-local
+    #image: server-cli-local
     # for command options: https://github.com/wppconnect-team/server-cli/blob/main/src/program.js
     command: wppserver --startAllSession
     volumes:
