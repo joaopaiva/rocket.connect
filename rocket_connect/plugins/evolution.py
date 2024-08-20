@@ -99,6 +99,7 @@ class Connector(ConnectorBase):
 
     def status_session(self):
         if self.config.get("endpoint", None):
+
             output = {}
             # GET {{baseUrl}}/instance/connectionState/{{instance}}
             secret_key = self.config.get("secret_key")
@@ -148,9 +149,22 @@ class Connector(ConnectorBase):
                     endpoint_fetchinstances_response.json()
                 )
 
+            # fetch instance settings
+            endpoint_settings_url = "{}/settings/find/{}".format(
+                self.config.get("endpoint"),
+                instance_name,
+            )
+            endpoint_settings_response = requests.request(
+                "GET",
+                endpoint_settings_url,
+                headers=headers,
+            )
+
             if status_instance_response:
                 output = status_instance_response.json()
                 output["webhook"] = endpoint_webhook_response.json()
+            if endpoint_settings_response:
+                output["settings"] = endpoint_settings_response.json()
             if endpoint_fetchinstances_response:
                 output["instance"] = endpoint_fetchinstances_response
                 return output
