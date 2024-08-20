@@ -1294,7 +1294,7 @@ class Connector:
                     close_message = self.config.get(
                         "advanced_force_close_message",
                         None,
-                    ).get(department, None)
+                    ).get(department, force_close_message)
                 except KeyError:
                     close_message = None
         # pass room as context for close_message as template
