@@ -140,6 +140,7 @@ class Command(BaseCommand):
             }
             connector.name = "EVOLUTION"
             connector.connector_type = "evolution"
+            connector.department = "EVOLUTION-DEPARTMENT"
             connector.save()
             if connector_created:
                 print("CONNECTOR CREATED: ", connector)
@@ -401,6 +402,33 @@ class Command(BaseCommand):
                         "email": "metacloud@email.com",
                         "name": "METACLOUD-DEPARTMENT",
                         "description": """meta cloud department created by dev_settings""",
+                    },
+                    "agents": [
+                        {
+                            "agentId": aa[user].json()["user"]["_id"],
+                            "count": 0,
+                            "order": 0,
+                        },
+                        {
+                            "agentId": admin["_id"],
+                            "count": 0,
+                            "order": 0,
+                        },
+                    ],
+                }
+                rocket.call_api_post("livechat/department", **new_department)
+                #
+                # ADD EVOLUTION DEPARTMENT
+                #
+                new_department = {
+                    "department": {
+                        "_id": "evolution_api_department",
+                        "enabled": True,
+                        "showOnRegistration": True,
+                        "showOnOfflineForm": True,
+                        "email": "metacloud@email.com",
+                        "name": "EVOLUTION-DEPARTMENT",
+                        "description": """evolution department created by dev_settings""",
                     },
                     "agents": [
                         {
