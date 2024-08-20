@@ -206,6 +206,9 @@ class Connector(ConnectorBase):
     def get_visitor_name(self):
         return self.message["profile"][0]["profile"]["name"]
 
+    def get_visitor_username(self):
+        return "whatsapp:" + self.message["from"]
+
     def get_visitor_token(self):
         return "whatsapp:" + self.message["from"] + "@c.us"
 
