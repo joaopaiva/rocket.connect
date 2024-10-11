@@ -18,7 +18,7 @@ services:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
     image: rocket_connect_local_django
-    container_name: django
+    #container_name: django
     depends_on:
       - postgres
       - mailhog
@@ -45,7 +45,7 @@ services:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
     image: rocket_connect_production_postgres
-    container_name: postgres
+    #container_name: postgres
     #ports:
     #  - "5432:5432"
     volumes:
@@ -56,7 +56,7 @@ services:
 
   docs:
     image: rocket_connect_local_docs
-    container_name: docs
+    #container_name: docs
     build:
       context: .
       dockerfile: ./compose/local/docs/Dockerfile
