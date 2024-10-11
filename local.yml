@@ -30,8 +30,8 @@ services:
       - ./.envs/.local/.django
       - ./.envs/.local/.postgres
       #- ./.env
-    ports:
-      - "8000:8000"
+    #ports:
+    #  - "8000:8000"
     healthcheck:
       test: curl --fail http://localhost:8000
       interval: 30s
@@ -46,8 +46,8 @@ services:
       dockerfile: ./compose/production/postgres/Dockerfile
     image: rocket_connect_production_postgres
     container_name: postgres
-    ports:
-      - "5432:5432"
+    #ports:
+    #  - "5432:5432"
     volumes:
       - local_postgres_data:/var/lib/postgresql/data:Z
       - local_postgres_data_backups:/backups:z
@@ -66,14 +66,14 @@ services:
       - ./docs:/docs:z
       - ./config:/app/config:z
       - ./rocket_connect:/app/rocket_connect:z
-    ports:
-      - "7000:7000"
+    #ports:
+    #  - "7000:7000"
     command: /start-docs
 
   mailhog:
     image: mailhog/mailhog:v1.0.1
-    ports:
-      - "8025:8025"
+    #ports:
+    #  - "8025:8025"
 
   redis:
     image: redis:5.0
@@ -109,8 +109,8 @@ services:
     <<: *django
     image: rocket_connect_local_flower
     container_name: flower
-    ports:
-      - "5555:5555"
+    #ports:
+    #  - "5555:5555"
     healthcheck:
       test: curl --fail http://localhost:5555
       interval: 30s
@@ -147,14 +147,14 @@ services:
       OVERWRITE_SETTING_Show_Setup_Wizard: "completed"
     depends_on:
       - mongodb
-    expose:
-      - ${PORT:-3000}
-    ports:
-      - host_ip: ${BIND_IP:-0.0.0.0}
-        target: ${PORT:-3000}
-        published: ${HOST_PORT:-3000}
-        protocol: tcp
-        mode: host
+    #expose:
+    #  - ${PORT:-3000}
+    #ports:
+    #  - host_ip: ${BIND_IP:-0.0.0.0}
+    #    target: ${PORT:-3000}
+    #    published: ${HOST_PORT:-3000}
+    #    protocol: tcp
+    #    mode: host
 
   mongodb:
     image: docker.io/bitnami/mongodb:${MONGODB_VERSION:-4.4}
@@ -173,8 +173,8 @@ services:
       MONGODB_ADVERTISED_HOSTNAME: ${MONGODB_ADVERTISED_HOSTNAME:-mongodb}
       MONGODB_ENABLE_JOURNAL: ${MONGODB_ENABLE_JOURNAL:-true}
       ALLOW_EMPTY_PASSWORD: ${ALLOW_EMPTY_PASSWORD:-yes}
-    ports:
-      - 27017:27017
+    #ports:
+    #  - 27017:27017
 
   webdav:
     image: bytemark/webdav
@@ -185,8 +185,8 @@ services:
       - USERNAME=alice
       - PASSWORD=secret1234
       - LOCATION=/webdav
-    ports:
-      - 8011:80
+    #ports:
+    #  - 8011:80
 
   wppconnect:
     image: wppconnect/server-cli:main
@@ -195,8 +195,8 @@ services:
     volumes:
       - local_wppconnect_data:/usr/src/server-cli/userDataDir
       - local_wppconnect_tokens:/usr/src/server-cli/tokens
-    ports:
-      - "21465:21465"
+    #ports:
+    #  - "21465:21465"
 
   # quepasa:
   #   image: sufficit/quepasa
@@ -226,8 +226,8 @@ services:
 
   grafana:
     image: grafana/grafana:8.2.5
-    ports:
-      - 3001:3000
+    #ports:
+    #  - 3001:3000
     volumes:
       - ./compose/local/rocket_metrics/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
       - ./compose/local/rocket_metrics/grafana/provisioning/dashboards/provider:/etc/grafana/provisioning/dashboards:ro
@@ -237,8 +237,8 @@ services:
 
   prometheus:
     image: quay.io/prometheus/prometheus:v2.31.1
-    ports:
-      - 9090:9090
+    #ports:
+    #  - 9090:9090
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - '--storage.tsdb.retention.time=12w'
