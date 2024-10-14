@@ -45,7 +45,7 @@ services:
 
   docs:
     image: rocketconnect_local_docs
-    container_name: rocketconnect_local_docs
+    #container_name: rocketconnect_local_docs
     build:
       context: .
       dockerfile: ./compose/local/docs/Dockerfile
@@ -61,13 +61,13 @@ services:
 
   mailpit:
     image: docker.io/axllent/mailpit:latest
-    container_name: rocketconnect_local_mailpit
+    #container_name: rocketconnect_local_mailpit
     #ports:
     #  - "8025:8025"
 
   redis:
     image: docker.io/redis:6
-    container_name: rocketconnect_local_redis
+    #container_name: rocketconnect_local_redis
 
   celeryworker:
     <<: *django
