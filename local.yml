@@ -12,7 +12,7 @@ services:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
     image: rocketconnect_local_django
-    container_name: rocketconnect_local_django
+    #container_name: rocketconnect_local_django
     depends_on:
       - postgres
       - redis
@@ -22,8 +22,8 @@ services:
     env_file:
       - ./.envs/.local/.django
       - ./.envs/.local/.postgres
-    ports:
-      - '8000:8000'
+    #ports:
+    #  - '8000:8000'
     command: /start
     networks:
        default:
@@ -34,9 +34,9 @@ services:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
     image: rocketconnect_production_postgres
-    container_name: rocketconnect_local_postgres
-    ports:
-      - "5432:5432"
+    #container_name: rocketconnect_local_postgres
+    #ports:
+    #  - "5432:5432"
     volumes:
       - local_postgres_data:/var/lib/postgresql/data:Z
       - local_postgres_data_backups:/backups:z
@@ -55,15 +55,15 @@ services:
       - ./docs:/docs:z
       - ./config:/app/config:z
       - ./rocket_connect:/app/rocket_connect:z
-    ports:
-      - '9000:7000'
+    #ports:
+    #  - '9000:7000'
     command: /start-docs
 
   mailpit:
     image: docker.io/axllent/mailpit:latest
     container_name: rocketconnect_local_mailpit
-    ports:
-      - "8025:8025"
+    #ports:
+    #  - "8025:8025"
 
   redis:
     image: docker.io/redis:6
@@ -72,7 +72,7 @@ services:
   celeryworker:
     <<: *django
     image: rocketconnect_local_celeryworker
-    container_name: rocketconnect_local_celeryworker
+    #container_name: rocketconnect_local_celeryworker
     depends_on:
       - redis
       - postgres
@@ -83,7 +83,7 @@ services:
   celerybeat:
     <<: *django
     image: rocketconnect_local_celerybeat
-    container_name: rocketconnect_local_celerybeat
+    #container_name: rocketconnect_local_celerybeat
     depends_on:
       - redis
       - postgres
@@ -94,17 +94,17 @@ services:
   flower:
     <<: *django
     image: rocketconnect_local_flower
-    container_name: rocketconnect_local_flower
-    ports:
-      - '5555:5555'
+    #container_name: rocketconnect_local_flower
+    #ports:
+    #  - '5555:5555'
     command: /start-flower
 
   evolution:
     #image: atendai/evolution-api:v2.0.10
     image: atendai/evolution-api:v1.8.2
     restart: always
-    ports:
-      - 8084:8080
+    #ports:
+    #  - 8084:8080
     volumes:
       - evolution_local_instances:/evolution/instances
       - evolution_local_store:/evolution/store
@@ -122,5 +122,5 @@ services:
     volumes:
       - local_wppconnect_data:/usr/src/server-cli/userDataDir
       - local_wppconnect_tokens:/usr/src/server-cli/tokens
-    ports:
-      - "21465:21465"
+    #ports:
+    #  - "21465:21465"
