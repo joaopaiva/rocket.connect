@@ -11,7 +11,9 @@ SECRET_KEY = env(
     default="baa8Ko1nbqsSGQohm42LJmtaGvqBiM2HwD5RWHKRQvq8RIk3Ce8YYNooELemZnO7",
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
+
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
 
 # CACHES
 # ------------------------------------------------------------------------------
