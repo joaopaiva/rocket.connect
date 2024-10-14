@@ -5,6 +5,7 @@ volumes:
   evolution_local_instances: {}
   local_wppconnect_data: {}
   local_wppconnect_tokens: {}
+  local_rocket_mongodb_data: {}
 
 services:
   django: &django
