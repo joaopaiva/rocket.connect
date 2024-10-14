@@ -1,5 +1,3 @@
-version: "3.7"
-
 volumes:
   local_rocket_mongodb_data: {}
 
@@ -35,12 +33,12 @@ services:
       - mongodb
     expose:
       - ${PORT:-3000}
-    ports:
-      - host_ip: ${BIND_IP:-0.0.0.0}
-        target: ${PORT:-3000}
-        published: ${HOST_PORT:-3000}
-        protocol: tcp
-        mode: host
+    #ports:
+    #  - host_ip: ${BIND_IP:-0.0.0.0}
+    #    target: ${PORT:-3000}
+    #    published: ${HOST_PORT:-3000}
+    #    protocol: tcp
+    #    mode: host
 
   mongodb:
     image: docker.io/bitnami/mongodb:${MONGODB_VERSION:-4.4}
@@ -59,5 +57,5 @@ services:
       MONGODB_ADVERTISED_HOSTNAME: ${MONGODB_ADVERTISED_HOSTNAME:-mongodb}
       MONGODB_ENABLE_JOURNAL: ${MONGODB_ENABLE_JOURNAL:-true}
       ALLOW_EMPTY_PASSWORD: ${ALLOW_EMPTY_PASSWORD:-yes}
-    ports:
-      - 27017:27017
+    #ports:
+    #  - 27017:27017
